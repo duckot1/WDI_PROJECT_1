@@ -1,6 +1,6 @@
 body {
   margin: 0 auto;
-  width: 900px;
+  width: 1100px;
 }
 
 ul {
@@ -15,6 +15,39 @@ li {
   display: inline-block;
   vertical-align: top;
   border: 3px solid black;
-  height: 50px;
-  width: 50px;
+  height: 80px;
+  width: 80px;
+}
+
+.health {
+  float: left;
+  width: 300px;
+  height: 60px;
+  border: 3px solid black;
+}
+
+.score {
+  margin: auto;
+  width: 200px;
+  height: 80px;
+  border: 3px solid black;
+  float: left;
+  margin-left: 40px;
+}
+
+.target {
+  background-color: red;
+  list-style-type: none;
+  display: inline-block;
+  vertical-align: top;
+  border: 3px solid black;
+  height: 80px;
+  width: 80px;
+}
+
+
+.ammo {
+  float: right;
+  height: 40px;
+  width: 40px;
 }
