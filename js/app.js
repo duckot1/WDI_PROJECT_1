@@ -1,19 +1,53 @@
 var Game = Game || {};
 
-Game.hitListener2 = function(a, b) {
-  Game.targets = document.getElementsByClassName('target');
-  Game.targets[0].addEventListener('click', function(){
-    this.className = 'boxes';
+Game.reload = function () {
+  Game.ammo = document.getElementsByClassName('ammo');
+  document.getElementById('reload').addEventListener('click', function(){
+    for (var j = 0; j < (6 - Game.ammo.length); j++) {
+      Game.bullet = document.createElement('li');
+      document.getElementById('ammoBox').appendChild(Game.bullet);
+      Game.bullet.setAttribute('class', 'ammo');
+      console.log(Game.ammo.length);
+    }
   });
-  Game.targets[1].addEventListener('click', function(){
-    this.className = 'boxes';
-  });
-  if (Game.targets.length > 0) {
-    Game.setTargetTwo(a + 10, b + 15);
+};
+
+Game.checkEnemies = function (a, b) {
+  if (Game.targets.length === 0){
+    if (b < 72) {
+      Game.setTargetTwo(a + 5, b + 6);
+    } else {
+      Game.setTargetThree();
+    }
   }
 };
 
+Game.setTargetThree = function() {
+  console.log('game over');
+};
+
+Game.hitListener2 = function(a, b) {
+  Game.ammo = document.getElementsByClassName('ammo');
+  if (Game.ammo.length > 0) {
+    Game.targets = document.getElementsByClassName('target');
+    Game.targets[1].addEventListener('click', function(){
+      this.className = 'boxes';
+      console.log(Game.targets.length);
+      Game.checkEnemies(a, b);
+    });
+    Game.targets[0].addEventListener('click', function(){
+      this.className = 'boxes';
+      console.log(Game.targets.length);
+      Game.checkEnemies(a, b);
+    });
+  } else {
+    console.log('reload');
+  }
+  Game.reload();
+};
+
 Game.setTargetTwo = function(a, b) {
+  Game.ammo = document.getElementsByClassName('ammo');
   Game.boxes = document.getElementsByClassName('boxes');
   Game.boxes[a].setAttribute('class', 'target');
   Game.boxes[b].setAttribute('class', 'target');
@@ -21,24 +55,53 @@ Game.setTargetTwo = function(a, b) {
 };
 
 Game.hitListener = function(b) {
+  Game.ammo = document.getElementsByClassName('ammo');
   Game.target = document.getElementsByClassName('target');
   Game.target[0].addEventListener('click', function(){
-    Game.target[0].className = 'boxes';
-    if (b < 48){
-      Game.setTarget(b + 18);
-      console.log(b);
+    if (Game.ammo.length === 0) {
+      console.log('reload');
     } else {
-      Game.setTargetTwo(14, 58);
+      Game.target[0].className = 'boxes';
+      if (b < 48){
+        Game.setTarget(b + 18);
+        console.log(b);
+      } else {
+        Game.setTargetTwo(14, 58);
+      }
     }
   });
+  Game.reload();
 };
 
 
+
+Game.shotListener = function() {
+  Game.ammo = document.getElementsByClassName('ammo');
+  Game.boxes = document.getElementsByClassName('boxes');
+  for (var i = 0; i < Game.boxes.length; i++) {
+    Game.boxes[i].addEventListener('click', function(){
+      if (Game.ammo.length === 0) {
+        console.log('reload');
+      } else {
+        console.log('bang');
+        document.getElementById('ammoBox').removeChild(Game.ammo[0]);
+      }
+    });
+  }
+  Game.reload();
+};
+
 Game.setTarget = function (a) {
+  Game.ammo = document.getElementsByClassName('ammo');
   Game.boxes = document.getElementsByClassName('boxes');
   Game.boxes[a].setAttribute('class', 'target');
   Game.hitListener(a);
 };
+
+
+
+
+
 
 Game.buildGrid = function () {
   for (var i = 0; i < 80; i++) {
@@ -46,12 +109,20 @@ Game.buildGrid = function () {
     document.getElementById('grid').appendChild(Game.box);
     Game.box.setAttribute('class', 'boxes');
   }
+  for (var j = 0; j < 6; j++) {
+    Game.bullet = document.createElement('li');
+    document.getElementById('ammoBox').appendChild(Game.bullet);
+    Game.bullet.setAttribute('class', 'ammo');
+  }
   Game.setTarget(13);
+  Game.shotListener();
 };
+
 
 
 window.onload = function() {
   Game.buildGrid();
+
 };
 
 
