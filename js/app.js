@@ -14,11 +14,25 @@ Game.reload = function () {
 
 Game.checkEnemies = function (a, b) {
   if (Game.targets.length === 0){
+    clearTimeout(Game.timer);
     if (b < 72) {
       Game.setTargetTwo(a + 5, b + 6);
     } else {
       Game.setTargetThree();
     }
+  }
+};
+
+Game.damage = function () {
+  if (document.getElementsByClassName('health').length === 1) {
+    $('#healthBox :last-child').remove();
+    $('#grid').remove();
+    Game.gameOver = document.createElement('li');
+    document.getElementById('grid').appendChild(Game.gameOver);
+    Game.gameOver.setAttribute('class', 'gameOver');
+    $('gameOver').html('GAME OVER!');
+  } else {
+    $('#healthBox :last-child').remove();
   }
 };
 
@@ -28,21 +42,25 @@ Game.setTargetThree = function() {
 
 Game.hitListener2 = function(a, b) {
   Game.ammo = document.getElementsByClassName('ammo');
-  if (Game.ammo.length > 0) {
-    Game.targets = document.getElementsByClassName('target');
-    Game.targets[1].addEventListener('click', function(){
+  Game.targets = document.getElementsByClassName('target');
+  Game.targets[1].addEventListener('click', function(){
+    if (Game.ammo.length === 0) {
+      console.log('reload');
+    } else {
       this.className = 'boxes';
       console.log(Game.targets.length);
       Game.checkEnemies(a, b);
-    });
-    Game.targets[0].addEventListener('click', function(){
+    }
+  });
+  Game.targets[0].addEventListener('click', function(){
+    if (Game.ammo.length === 0) {
+      console.log('reload');
+    } else {
       this.className = 'boxes';
       console.log(Game.targets.length);
       Game.checkEnemies(a, b);
-    });
-  } else {
-    console.log('reload');
-  }
+    }
+  });
   Game.reload();
 };
 
@@ -52,6 +70,7 @@ Game.setTargetTwo = function(a, b) {
   Game.boxes[a].setAttribute('class', 'target');
   Game.boxes[b].setAttribute('class', 'target');
   Game.hitListener2(a, b);
+  Game.timer = setTimeout(Game.damage, 4000);
 };
 
 Game.hitListener = function(b) {
@@ -61,6 +80,7 @@ Game.hitListener = function(b) {
     if (Game.ammo.length === 0) {
       console.log('reload');
     } else {
+      clearTimeout(Game.timer);
       Game.target[0].className = 'boxes';
       if (b < 48){
         Game.setTarget(b + 18);
@@ -92,10 +112,10 @@ Game.shotListener = function() {
 };
 
 Game.setTarget = function (a) {
-  Game.ammo = document.getElementsByClassName('ammo');
   Game.boxes = document.getElementsByClassName('boxes');
   Game.boxes[a].setAttribute('class', 'target');
   Game.hitListener(a);
+  Game.timer = setTimeout(Game.damage, 2000);
 };
 
 
@@ -114,15 +134,14 @@ Game.buildGrid = function () {
     document.getElementById('ammoBox').appendChild(Game.bullet);
     Game.bullet.setAttribute('class', 'ammo');
   }
-  Game.setTarget(13);
   Game.shotListener();
+  Game.setTarget(13);
 };
 
 
 
 window.onload = function() {
   Game.buildGrid();
-
 };
 
 

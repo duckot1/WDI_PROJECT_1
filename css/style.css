@@ -21,8 +21,8 @@ li {
 
 .health {
   float: left;
-  width: 300px;
-  height: 60px;
+  width: 50px;
+  height: 30px;
   border: 3px solid black;
 }
 
@@ -57,4 +57,9 @@ li {
 #ammoBox {
   display: inline-block;
   float: right;
+}
+
+.gameOver {
+  width: 600px;
+  height: 400px;
 }
