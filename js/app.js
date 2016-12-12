@@ -3,6 +3,18 @@ var Game = Game || {};
 Game.gameOver = function() {
   $('#range').append('<div class="finalScore"></div>');
   $('.finalScore').html('You scored ' + Game.$score.html() + '. Play Again?');
+  if (Game.$score > 100) {
+    $('.finalScore').append('<button id="nextLevel">Next level</button>');
+    
+  } else {
+    $('.finalScore').append('<button id="reset">Play Again</button>');
+    $('#reset').on('click', function(){
+      $('.finalScore').remove();
+      Game.$score.html(0);
+      Game.levels.bind(Game);
+    });
+  }
+
   console.log('gameOver');
 };
 
@@ -176,7 +188,7 @@ Game.buildGrid = function () {
   this.reloadBox        = document.getElementById('reload');
   this.$range           = $('#range');
   this.levelOneDelay    = 18000;
-  this.gameLength       = 70000;
+  this.gameLength       = 5000;
   this.$score           = $('#score');
 
   this.addAmmo();
