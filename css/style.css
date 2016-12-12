@@ -63,3 +63,12 @@ li {
   width: 600px;
   height: 400px;
 }
+
+.enemyOne {
+  width: 60px;
+  height: 40px;
+  background-color: red;
+  position: absolute;
+  top:100px;
+  left:400px;
+}

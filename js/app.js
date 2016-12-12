@@ -23,12 +23,24 @@ Game.checkEnemies = function (a, b) {
   }
 };
 
+Game.moveLeft = function(a, b) {
+  $(document).ready(function(){
+    $(a).animate({left: b}, 'slow');
+  });
+};
+
+Game.moveRight = function(a, b) {
+  $(document).ready(function(){
+    $(a).animate({right: b}, 'slow');
+  });
+};
+
 Game.damage = function () {
   if (document.getElementsByClassName('health').length === 1) {
     $('#healthBox :last-child').remove();
     $('#grid').remove();
     Game.gameOver = document.createElement('li');
-    document.getElementById('grid').appendChild(Game.gameOver);
+    document.getElementsByClassName('grid').appendChild(Game.gameOver);
     Game.gameOver.setAttribute('class', 'gameOver');
     $('gameOver').html('GAME OVER!');
   } else {
@@ -70,30 +82,20 @@ Game.setTargetTwo = function(a, b) {
   Game.boxes[a].setAttribute('class', 'target');
   Game.boxes[b].setAttribute('class', 'target');
   Game.hitListener2(a, b);
-  Game.timer = setTimeout(Game.damage, 4000);
+  Game.damageTimer = setTimeout(Game.damage, 4000);
 };
 
-Game.hitListener = function(b) {
-  Game.ammo = document.getElementsByClassName('ammo');
-  Game.target = document.getElementsByClassName('target');
-  Game.target[0].addEventListener('click', function(){
+Game.hitListener = function() {
+  $('.enemyOne').on('click', function(){
     if (Game.ammo.length === 0) {
       console.log('reload');
     } else {
       clearTimeout(Game.timer);
-      Game.target[0].className = 'boxes';
-      if (b < 48){
-        Game.setTarget(b + 18);
-        console.log(b);
-      } else {
-        Game.setTargetTwo(14, 58);
-      }
+      $('.enemyOne').remove();
     }
   });
   Game.reload();
 };
-
-
 
 Game.shotListener = function() {
   Game.ammo = document.getElementsByClassName('ammo');
@@ -111,11 +113,11 @@ Game.shotListener = function() {
   Game.reload();
 };
 
-Game.setTarget = function (a) {
-  Game.boxes = document.getElementsByClassName('boxes');
-  Game.boxes[a].setAttribute('class', 'target');
-  Game.hitListener(a);
-  Game.timer = setTimeout(Game.damage, 2000);
+Game.setTargetOne = function () {
+  $('body').append('<div class="enemyOne"></div>');
+  Game.moveLeft('.enemyOne', '200px');
+  Game.damageTimer = setTimeout(Game.damage, 2000);
+  Game.hitListener();
 };
 
 
@@ -135,7 +137,7 @@ Game.buildGrid = function () {
     Game.bullet.setAttribute('class', 'ammo');
   }
   Game.shotListener();
-  Game.setTarget(13);
+  Game.setTargetOne();
 };
 
 
