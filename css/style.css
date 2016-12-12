@@ -70,6 +70,7 @@ li {
 }
 
 #range {
+  margin-top: 0px;
   height: 600px;
   width: 100%;
   background: grey;
@@ -129,4 +130,41 @@ li {
   position: absolute;
   top:300px;
   left:0px;
+}
+
+#enemySeven {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: absolute;
+  top:350px;
+  left:0px;
+}
+
+#enemyEight {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: absolute;
+  top:250px;
+  left:100%;
+}
+
+#enemyNine {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: absolute;
+  top:150px;
+  left:0px;
+}
+
+.finalScore {
+  display: inline-block;
+  margin: 200px auto;
+  width: 300px;
+  height: 300px;
+  background-color: blue;
+  text-align: center;
+  vertical-align: middle;
 }
