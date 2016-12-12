@@ -1,6 +1,6 @@
 var Game = Game || {};
 
-Game.reload = function () {
+Game.reload = function() {
   Game.ammo = document.getElementsByClassName('ammo');
   document.getElementById('reload').addEventListener('click', function(){
     for (var j = 0; j < (6 - Game.ammo.length); j++) {
@@ -25,13 +25,15 @@ Game.checkEnemies = function (a, b) {
 
 Game.moveLeft = function(a, b) {
   $(document).ready(function(){
-    $(a).animate({left: b}, 'slow');
+    $(a).animate({left: b}, 5000, function(){
+      $(this).remove();
+    });
   });
 };
 
 Game.moveRight = function(a, b) {
   $(document).ready(function(){
-    $(a).animate({right: b}, 'slow');
+    $(a).animate({right: b}, 2000);
   });
 };
 
@@ -85,13 +87,13 @@ Game.setTargetTwo = function(a, b) {
   Game.damageTimer = setTimeout(Game.damage, 4000);
 };
 
-Game.hitListener = function() {
-  $('.enemyOne').on('click', function(){
+Game.hitListener = function(a) {
+  $(a).on('click', function(){
     if (Game.ammo.length === 0) {
       console.log('reload');
     } else {
-      clearTimeout(Game.timer);
-      $('.enemyOne').remove();
+      clearTimeout(Game.damageTimer);
+      $(a).remove();
     }
   });
   Game.reload();
@@ -113,17 +115,26 @@ Game.shotListener = function() {
   Game.reload();
 };
 
-Game.setTargetOne = function () {
-  $('body').append('<div class="enemyOne"></div>');
-  Game.moveLeft('.enemyOne', '200px');
-  Game.damageTimer = setTimeout(Game.damage, 2000);
-  Game.hitListener();
+Game.enemySelector = function()  {
+  Game.enemy = Math.floor(Math.random()*3);
+  if (Game.enemy === 0) {
+    $('body').append('<div id="enemyOne"></div>');
+    Game.moveLeft('#enemyOne', '0px');
+    Game.hitListener('#enemyOne');
+  } else if (Game.enemy === 1) {
+    $('body').append('<div id="enemyTwo"></div>');
+    Game.moveRight('#enemyTwo', '100%');
+    Game.hitListener('#enemyTwo');
+  } else if (Game.enemy === 2) {
+    $('body').append('<div id="enemyThree"></div>');
+    Game.moveLeft('#enemyThree', '0px');
+    Game.hitListener('#enemyThree');
+  }
 };
 
-
-
-
-
+Game.setTargetOne = function () {
+  setInterval(Game.enemySelector, 1000);
+};
 
 Game.buildGrid = function () {
   for (var i = 0; i < 80; i++) {
