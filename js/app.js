@@ -1,162 +1,148 @@
 var Game = Game || {};
 
-Game.reload = function() {
-  Game.ammo = document.getElementsByClassName('ammo');
-  document.getElementById('reload').addEventListener('click', function(){
-    for (var j = 0; j < (6 - Game.ammo.length); j++) {
-      Game.bullet = document.createElement('li');
-      document.getElementById('ammoBox').appendChild(Game.bullet);
-      Game.bullet.setAttribute('class', 'ammo');
-      console.log(Game.ammo.length);
-    }
-  });
-};
-
-Game.checkEnemies = function (a, b) {
-  if (Game.targets.length === 0){
-    clearTimeout(Game.timer);
-    if (b < 72) {
-      Game.setTargetTwo(a + 5, b + 6);
-    } else {
-      Game.setTargetThree();
-    }
+Game.addAmmo = function addAmmo() {
+  var j = 0;
+  var numberOfBullets = 6 - Game.$ammo.length;
+  for (j; j < numberOfBullets; j++) {
+    Game.$ammoBox.append('<li class="ammo"></li>');
   }
 };
 
+Game.reload = function reload() {
+  this.$reloadBox.on('click', this.addAmmo);
+};
+
 Game.moveLeft = function(a, b) {
-  $(document).ready(function(){
-    $(a).animate({left: b}, 5000, function(){
-      $(this).remove();
-    });
+  $(a).animate({left: b, top: '50px', height: '-=200px', width: '-=200px'}, 3500, function(){
+    $(this).remove();
   });
 };
 
 Game.moveRight = function(a, b) {
-  $(document).ready(function(){
-    $(a).animate({right: b}, 2000);
+  $(a).animate({left: b, top: '100px', height: '-=200px', width: '-=200px'}, 3500, function(){
+    $(this).remove();
   });
 };
 
-Game.damage = function () {
-  if (document.getElementsByClassName('health').length === 1) {
-    $('#healthBox :last-child').remove();
-    $('#grid').remove();
-    Game.gameOver = document.createElement('li');
-    document.getElementsByClassName('grid').appendChild(Game.gameOver);
-    Game.gameOver.setAttribute('class', 'gameOver');
-    $('gameOver').html('GAME OVER!');
-  } else {
-    $('#healthBox :last-child').remove();
-  }
-};
-
-Game.setTargetThree = function() {
-  console.log('game over');
-};
-
-Game.hitListener2 = function(a, b) {
-  Game.ammo = document.getElementsByClassName('ammo');
-  Game.targets = document.getElementsByClassName('target');
-  Game.targets[1].addEventListener('click', function(){
-    if (Game.ammo.length === 0) {
-      console.log('reload');
-    } else {
-      this.className = 'boxes';
-      console.log(Game.targets.length);
-      Game.checkEnemies(a, b);
-    }
-  });
-  Game.targets[0].addEventListener('click', function(){
-    if (Game.ammo.length === 0) {
-      console.log('reload');
-    } else {
-      this.className = 'boxes';
-      console.log(Game.targets.length);
-      Game.checkEnemies(a, b);
-    }
-  });
-  Game.reload();
-};
-
-Game.setTargetTwo = function(a, b) {
-  Game.ammo = document.getElementsByClassName('ammo');
-  Game.boxes = document.getElementsByClassName('boxes');
-  Game.boxes[a].setAttribute('class', 'target');
-  Game.boxes[b].setAttribute('class', 'target');
-  Game.hitListener2(a, b);
-  Game.damageTimer = setTimeout(Game.damage, 4000);
+Game.enemyHit = function enemyHit() {
+  if (Game.$ammo.length === 0) return console.log('reload');
+  $(this).remove();
+  $('#score').html(parseInt($('#score').html()) + 10);
+  console.log('hit!');
 };
 
 Game.hitListener = function(a) {
-  $(a).on('click', function(){
-    if (Game.ammo.length === 0) {
-      console.log('reload');
-    } else {
-      clearTimeout(Game.damageTimer);
-      $(a).remove();
-    }
-  });
-  Game.reload();
+  $(a).on('click', this.enemyHit);
+};
+
+Game.enemySelectorOne = function()  {
+  var newEnemy = Math.floor(Math.random()*3);
+  switch (newEnemy) {
+    case 0:
+      this.$range.append('<div id="enemyOne"></div>');
+      this.moveLeft('#enemyOne', '0px');
+      this.hitListener('#enemyOne');
+      break;
+    case 1:
+      this.$range.append('<div id="enemyTwo"></div>');
+      this.moveRight('#enemyTwo', '100%');
+      this.hitListener('#enemyTwo');
+      break;
+    case 2:
+      this.$range.append('<div id="enemyThree"></div>');
+      this.moveLeft('#enemyThree', '0px');
+      this.hitListener('#enemyThree');
+      break;
+  }
+};
+
+Game.enemySelectorTwo = function()  {
+  var newEnemy = Math.floor(Math.random()*3);
+  switch (newEnemy) {
+    case 0:
+      this.$range.append('<div id="enemyFour"></div>');
+      this.moveRight('#enemyFour', '100%');
+      this.hitListener('#enemyFour');
+      break;
+    case 1:
+      this.$range.append('<div id="enemyFive"></div>');
+      this.moveLeft('#enemyFive', '0px');
+      break;
+    case 2:
+      this.$range.append('<div id="enemySix"></div>');
+      this.moveRight('#enemySix', '100%');
+      this.hitListener('#enemySix');
+      break;
+  }
+};
+
+Game.shoot = function shoot() {
+  if (this.$ammo.length === 0) return console.log('Please reload');
+  console.log('Shot fired!');
+  this.$ammoBox.removeChild(this.$ammo[0]);
 };
 
 Game.shotListener = function() {
-  Game.ammo = document.getElementsByClassName('ammo');
-  Game.boxes = document.getElementsByClassName('boxes');
-  for (var i = 0; i < Game.boxes.length; i++) {
-    Game.boxes[i].addEventListener('click', function(){
-      if (Game.ammo.length === 0) {
-        console.log('reload');
-      } else {
-        console.log('bang');
-        document.getElementById('ammoBox').removeChild(Game.ammo[0]);
-      }
-    });
-  }
-  Game.reload();
+  this.$range.on('click', this.shoot.bind(this));
 };
 
-Game.enemySelector = function()  {
-  Game.enemy = Math.floor(Math.random()*3);
-  if (Game.enemy === 0) {
-    $('body').append('<div id="enemyOne"></div>');
-    Game.moveLeft('#enemyOne', '0px');
-    Game.hitListener('#enemyOne');
-  } else if (Game.enemy === 1) {
-    $('body').append('<div id="enemyTwo"></div>');
-    Game.moveRight('#enemyTwo', '100%');
-    Game.hitListener('#enemyTwo');
-  } else if (Game.enemy === 2) {
-    $('body').append('<div id="enemyThree"></div>');
-    Game.moveLeft('#enemyThree', '0px');
-    Game.hitListener('#enemyThree');
-  }
+Game.createEnemies = function () {
+  setInterval(this.enemySelectorOne.bind(this), this.enemyInterval);
 };
 
-Game.setTargetOne = function () {
-  setInterval(Game.enemySelector, 1000);
+Game.createEnemiesTwo = function () {
+  setInterval(Game.enemySelectorTwo.bind(Game), 10000);
 };
+
+Game.levels = function () {
+  this.createEnemies();
+  setTimeout(this.createEnemiesTwo, this.levelOneDelay);
+};
+
 
 Game.buildGrid = function () {
-  for (var i = 0; i < 80; i++) {
-    Game.box = document.createElement('li');
-    document.getElementById('grid').appendChild(Game.box);
-    Game.box.setAttribute('class', 'boxes');
-  }
-  for (var j = 0; j < 6; j++) {
-    Game.bullet = document.createElement('li');
-    document.getElementById('ammoBox').appendChild(Game.bullet);
-    Game.bullet.setAttribute('class', 'ammo');
-  }
-  Game.shotListener();
-  Game.setTargetOne();
+
+  $('.controls').append('<div id="score"></div>');
+  $('.controls').append('<div id="reload"></div>');
+  $('.controls').append('<div id="ammoBox"></div>');
+  $('#ammoBox').append('<ul></ul>');
+
+  this.numberOfBullets  = 6;
+  this.enemyInterval    = 5000;
+  this.$ammoBox         = $('#ammoBox');
+  this.$ammo            = $('.ammo');
+  this.$reloadBox       = $('#reload');
+  this.$range           = $('#range');
+  this.levelOneDelay    = this.enemyInterval * 4;
+
+  this.shotListener();
+  this.levels();
+  this.reload();
+  Game.addAmmo();
 };
 
+// Game.startMenu = function() {
+//
+// }
+
+window.onload = Game.buildGrid.bind(Game);
 
 
-window.onload = function() {
-  Game.buildGrid();
-};
 
+// Deprecated
+//
+// Game.damage = function () {
+//   if (document.getElementsByClassName('health').length === 1) {
+//     $('#healthBox :last-child').remove();
+//     $('#grid').remove();
+//     Game.gameOver = document.createElement('li');
+//     document.getElementsByClassName('grid').appendChild(Game.gameOver);
+//     Game.gameOver.setAttribute('class', 'gameOver');
+//     $('gameOver').html('GAME OVER!');
+//   } else {
+//     $('#healthBox :last-child').remove();
+//   }
+// };
 
 
 // counter ++ for score
