@@ -2,36 +2,27 @@ var Game = Game || {};
 
 Game.gameOver = function() {
   $('#range').append('<div class="finalScore"></div>');
-  $('.finalScore').html('You scored ' + Game.$score.html() + '. Play Again?');
-  if (parseInt((Game.$score).html()) > 100) {
-    $('.finalScore').append('<button id="nextLevel">Next level</button>');
-    $('#nextLevel').on('click', function(){
-      $('.finalScore').remove();
-      Game.enemyInterval = Game.enemyInterval * 0.8;
-      Game.moveAwaySpeed = Game.moveAwaySpeed * 0.8;
-      Game.timesRunOne = 0;
-      Game.timesRunTwo = 0;
-      Game.timesRunThree = 0;
-      Game.enemyOnetimes = Game.enemyOnetimes * 1.5;
-      Game.enemyTwotimes = Game.enemyTwotimes * 1.5;
-      Game.levels();
-    });
-  } else {
-    $('.finalScore').append('<button id="reset">Play Again</button>');
-    $('#reset').on('click', function(){
-      $('.finalScore').remove();
-      Game.$score.html(0);
-      Game.levels();
-    });
-  }
-
-  console.log('gameOver');
+  $('.finalScore').append('<button id="nextLevel">Next level</button>');
+  $('#nextLevel').on('click', function(){
+    $('.finalScore').remove();
+    $('body').off();
+    Game.enemyInterval = Game.enemyInterval * 0.7;
+    Game.moveAwaySpeed = Game.moveAwaySpeed * 0.7;
+    Game.timesRunOne = 0;
+    Game.timesRunTwo = 0;
+    Game.timesRunThree = 0;
+    Game.enemyOnetimes = Game.enemyOnetimes * 1.5;
+    Game.enemyTwotimes = Game.enemyTwotimes * 1.5;
+    Game.gameLength = 50000;
+    Game.levels();
+  });
 };
 
 Game.damage = function () {
   if (document.getElementsByClassName('health').length === 1) {
     $('#healthBox :last-child').remove();
-    console.log('Game over');
+    Game.$range.off('click');
+    $('#reload').off('click');
   } else {
     $('#healthBox :last-child').remove();
   }
@@ -52,9 +43,25 @@ Game.reload = function reload() {
   this.reloadBox.addEventListener('click', this.addAmmo);
 };
 
-Game.moveAway = function(a, b, c) {
-  $(a).animate({left: b, top: c, height: '+=200px', width: '+=200px'}, Game.moveAwaySpeed, function(){
+Game.shake = function shake(a) {
+  var div = document.getElementsByClassName(a);
+  var interval = 100;
+  var distance = 10;
+  var times = 4;
+  $(div).css('position', 'relative');
+  for (var iter = 0; iter < (times + 1) ; iter++) {
+    $(div).animate({
+      left: ((iter % 2 === 0 ? distance : distance * -1))
+    }, interval);
+  }
+  $(div).animate({ left: 0 }, interval);
+};
+
+Game.moveAway = function(a, b, c, d, e) {
+  $(a).animate({left: b, top: c, height: d, width: e}, Game.moveAwaySpeed, function(){
     $(this).remove();
+    Game.shake('controls');
+    Game.shake('range');
     Game.damage();
   });
 };
@@ -79,10 +86,28 @@ Game.healthListener = function(a) {
   $(a).on('click', this.healthRegen);
 };
 
+Game.explosion = function (a, b) {
+  $('#range').append('<div class="explosion"></div>');
+  $('.explosion').css('top', a.top);
+  $('.explosion').css('left', a.left);
+  $('.explosion').css('width', b);
+  $('.explosion').css('height', b);
+  Game.explosionRemove = function () {
+    $('.explosion').remove();
+  };
+  setTimeout(Game.explosionRemove, 1000);
+};
+
+
+
 Game.enemyHit = function enemyHit() {
   if (Game.ammo.length === 0) return console.log('reload');
-  $(this).stop();
+  if (Game.health.length === 0) return console.log('you are dead');
+  var position = $(this).position();
+  var width = $(this).width();
   $(this).remove();
+  $(this).stop();
+  Game.explosion(position, width);
   Game.$score.html(parseInt(Game.$score.html()) + 10);
   console.log('hit!');
 };
@@ -97,18 +122,18 @@ Game.enemySelectorOne = function()  {
     var newEnemy = Math.floor(Math.random()*3);
     switch (newEnemy) {
       case 0:
-        this.$range.append('<div id="enemyOne"></div>');
-        this.moveAway('#enemyOne', '325px', '200px');
+        this.$range.append('<div class="enemy" id="enemyOne"></div>');
+        this.moveAway('#enemyOne', '325px', '200px', '+=200px', '+=200px');
         this.hitListener('#enemyOne');
         break;
       case 1:
-        this.$range.append('<div id="enemyTwo"></div>');
-        this.moveAway('#enemyTwo', '525px', '200px');
+        this.$range.append('<div class="enemy" id="enemyTwo"></div>');
+        this.moveAway('#enemyTwo', '525px', '200px', '+=200px', '+=200px');
         this.hitListener('#enemyTwo');
         break;
       case 2:
-        this.$range.append('<div id="enemyThree"></div>');
-        this.moveAway('#enemyThree', '725px', '200px');
+        this.$range.append('<div class="enemy" id="enemyThree"></div>');
+        this.moveAway('#enemyThree', '725px', '200px', '+=200px', '+=200px');
         this.hitListener('#enemyThree');
         break;
     }
@@ -123,18 +148,18 @@ Game.enemySelectorTwo = function()  {
     var newEnemy = Math.floor(Math.random()*3);
     switch (newEnemy) {
       case 0:
-        this.$range.append('<div id="enemyFour">a</div>');
-        this.moveAway('#enemyFour', '325px', '400px');
+        this.$range.append('<div class="enemy" id="enemyFour"></div>');
+        this.moveAway('#enemyFour', '325px', '400px', '+=150px', '+=150px');
         this.hitListener('#enemyFour');
         break;
       case 1:
-        this.$range.append('<div id="enemyFive">a</div>');
-        this.moveAway('#enemyFive', '525px', '400px');
+        this.$range.append('<div class="enemy" id="enemyFive"></div>');
+        this.moveAway('#enemyFive', '525px', '400px', '+=150px', '+=150px');
         this.hitListener('#enemyFive');
         break;
       case 2:
-        this.$range.append('<div id="enemySix">a</div>');
-        this.moveAway('#enemySix', '725px', '400px');
+        this.$range.append('<div class="enemy" id="enemySix"></div>');
+        this.moveAway('#enemySix', '725px', '400px', '+=150px', '+=150px');
         this.hitListener('#enemySix');
         break;
     }
@@ -144,7 +169,7 @@ Game.enemySelectorTwo = function()  {
 };
 
 Game.healthSelector = function()  {
-  if (Game.timesRunThree < 8){
+  if (Game.timesRunThree < 4){
     Game.timesRunThree += 1;
     var newEnemy = Math.floor(Math.random()*3);
     switch (newEnemy) {
@@ -173,6 +198,7 @@ Game.shoot = function shoot() {
   if (this.ammo.length === 0) return console.log('Please reload');
   console.log('Shot fired!');
   this.ammoBox.removeChild(this.ammo[0]);
+  new Audio('./sounds/Laser_Cannon-Mike_Koenig-797224747.wav').play();
 };
 
 Game.shotListener = function() {
@@ -191,10 +217,11 @@ Game.createEnemiesTwo = function () {
 
 Game.createHealth = function () {
   Game.timesRunThree = 0;
-  Game.spawn = setInterval(Game.healthSelector.bind(Game), 10000);
+  Game.spawn = setInterval(Game.healthSelector.bind(Game), 20000);
 };
 
 Game.levels = function () {
+  this.shotListener();
   this.createEnemies();
   this.createHealth();
   setTimeout(this.createEnemiesTwo, this.levelOneDelay);
@@ -223,6 +250,7 @@ Game.buildGrid = function () {
   this.ammoBox          = document.getElementById('ammoBox');
   this.ammo             = document.getElementsByClassName('ammo');
   this.reloadBox        = document.getElementById('reload');
+  this.health           = document.getElementsByClassName('health');
   this.$range           = $('#range');
   this.levelOneDelay    = 18000;
   this.gameLength       = 70000;
@@ -231,67 +259,16 @@ Game.buildGrid = function () {
   Game.moveAcrossSpeed  = 3000;
   Game.enemyOnetimes    = 16;
   Game.enemyTwotimes    = 11;
+  Game.asteroids        = [];
 
   this.addAmmo();
-  this.shotListener();
   this.reload();
   this.levels();
 };
+
 
 // Game.startMenu = function() {
 //
 // }
 
 window.onload = Game.buildGrid.bind(Game);
-
-
-
-// Deprecated
-//
-// Game.damage = function () {
-//   if (document.getElementsByClassName('health').length === 1) {
-//     $('#healthBox :last-child').remove();
-//     $('#grid').remove();
-//     Game.gameOver = document.createElement('li');
-//     document.getElementsByClassName('grid').appendChild(Game.gameOver);
-//     Game.gameOver.setAttribute('class', 'gameOver');
-//     $('gameOver').html('GAME OVER!');
-//   } else {
-//     $('#healthBox :last-child').remove();
-//   }
-// };
-
-
-// counter ++ for score
-// for loop for grid listening for shot/potentially jQuery
-// random point on the screen
-// random number for difficulty
-
-
-// pseudo code
-
-// grid on top of a background image
-// boxes on the grid become clickable in a certain series (fixed)
-// player has to click each box before a timer runs out
-// if the player fails to click the box in time they lose some life
-// if life runs out game over
-// 10 points for each kill
-
-
-// add reload function
-// add more levels through constructor functions
-// add difficulty by decresing time/adding miss probability
-// add bonus sniper level
-// add multiple background images and a hover listener function for moving gun
-// add friendlies
-
-//css
-// image for terrorists
-// image for background
-// cursor change
-// animations??
-
-
-//set timeout`
-//adding then removing the class
-//set interval

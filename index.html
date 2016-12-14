@@ -5,10 +5,12 @@
   <title>my project</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="js/app.js" charset="utf-8"></script>
 </head>
 <body>
-  <div id="range"><div id="score">0</div></div>
+  <div id="range" class="range"></div>
   <div class="controls">
     <div id="healthBox">
       <li class="health"></li>
@@ -17,10 +19,12 @@
       <li class="health"></li>
       <li class="health"></li>
     </div>
-    <div id="reload">RELOAD</div>
     <div id="ammoBox">
       <ul>
       </ul>
+    </div>
+    <div id="reload">
+      <button>RELOAD</button>
     </div>
   </div>
 
