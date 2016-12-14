@@ -5,7 +5,7 @@ Game.gameOver = function() {
   $('.finalScore').append('<button id="nextLevel">Next level</button>');
   $('#nextLevel').on('click', function(){
     $('.finalScore').remove();
-    $('body').off();
+    $('#range').off('click');
     Game.enemyInterval = Game.enemyInterval * 0.7;
     Game.moveAwaySpeed = Game.moveAwaySpeed * 0.7;
     Game.timesRunOne = 0;
