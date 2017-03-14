@@ -6,8 +6,8 @@ Game.gameOver = function() {
   $('#nextLevel').on('click', function(){
     $('.finalScore').remove();
     $('#range').off('click');
-    Game.enemyInterval = Game.enemyInterval * 0.7;
-    Game.moveAwaySpeed = Game.moveAwaySpeed * 0.7;
+    Game.enemyInterval = Game.enemyInterval * 0.1;
+    Game.moveAwaySpeed = Game.moveAwaySpeed * 0.1;
     Game.timesRunOne = 0;
     Game.timesRunTwo = 0;
     Game.timesRunThree = 0;
